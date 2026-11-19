@@ -1,0 +1,10 @@
+{
+  "model": "KNN",
+  "best_params": {
+    "clf__metric": "cosine",
+    "clf__n_neighbors": 7,
+    "clf__weights": "distance"
+  },
+  "cv_f1_macro": 0.9643,
+  "train_time_sec": 58.5
+}

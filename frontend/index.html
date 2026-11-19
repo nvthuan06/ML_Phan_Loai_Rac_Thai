@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phân Loại Rác Tự Động</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: #f3f6f9;
+      color: #1e293b;
+      min-height: 100vh;
+      padding: 28px 16px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 960px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      padding: 28px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    header p {
+      font-size: 14px;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    .status-badge {
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 600;
+    }
+
+    .status-badge.online {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-badge.offline {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Vùng chọn & xem rõ ảnh */
+    .upload-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .drop-zone {
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 18px;
+      text-align: center;
+      cursor: pointer;
+      background: #f8fafc;
+      transition: all 0.2s ease;
+    }
+
+    .drop-zone:hover,
+    .drop-zone.dragover {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+
+    .drop-zone strong {
+      display: block;
+      font-size: 15px;
+      color: #1e293b;
+      margin-bottom: 4px;
+    }
+
+    .drop-zone span {
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .preview-box {
+      width: 100%;
+      height: 360px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      background: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .preview-box img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain; /* Giữ nguyên tỉ lệ, không cắt mất chi tiết ảnh */
+      display: none;
+    }
+
+    .preview-placeholder {
+      color: #94a3b8;
+      font-size: 14px;
+      text-align: center;
+      padding: 16px;
+    }
+
+    .file-meta {
+      font-size: 13px;
+      color: #475569;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    button:active {
+      transform: scale(0.99);
+    }
+
+    .btn-primary {
+      flex: 1;
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .btn-primary:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    /* Vùng kết quả dự đoán */
+    .result-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .result-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      background: #ffffff;
+    }
+
+    .result-card.empty {
+      min-height: 360px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #94a3b8;
+      background: #f8fafc;
+    }
+
+    .winner-box {
+      padding: 18px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border-left: 6px solid #2563eb;
+      background: #f8fafc;
+    }
+
+    .winner-box.Huu_Co {
+      border-left-color: #16a34a;
+      background: #f0fdf4;
+    }
+
+    .winner-box.Tai_Che {
+      border-left-color: #2563eb;
+      background: #eff6ff;
+    }
+
+    .winner-box.Vo_Co {
+      border-left-color: #ea580c;
+      background: #fff7ed;
+    }
+
+    .winner-caption {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #64748b;
+      font-weight: 700;
+    }
+
+    .winner-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-top: 6px;
+      gap: 12px;
+    }
+
+    .winner-name {
+      font-size: 26px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .winner-percent {
+      font-size: 28px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .winner-sub {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #475569;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 12px;
+    }
+
+    .prob-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .prob-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .prob-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+
+    .prob-label {
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .prob-item.top .prob-label {
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .prob-value {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: #0f172a;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 12px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.35s ease;
+    }
+
+    .bar-fill.Huu_Co { background: #16a34a; }
+    .bar-fill.Tai_Che { background: #2563eb; }
+    .bar-fill.Vo_Co { background: #ea580c; }
+
+    .error-box {
+      padding: 14px;
+      border-radius: 10px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #b91c1c;
+      font-size: 14px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Phân Loại Rác Tự Động</h1>
+        <p>MobileNetV2 (1.280 đặc trưng) + SVM (RBF)</p>
+      </div>
+      <div id="serverStatus" class="status-badge"></div>
+    </header>
+
+    <div class="grid">
+      <!-- Cột trái: chọn và hiển thị rõ ảnh -->
+      <div class="upload-panel">
+        <div id="dropZone" class="drop-zone">
+          <strong>Chọn ảnh hoặc kéo thả vào đây</strong>
+          <span>Hỗ trợ JPG, PNG, WEBP, BMP (có thể dán trực tiếp bằng Ctrl + V)</span>
+          <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.webp,.bmp" hidden />
+        </div>
+
+        <div class="preview-box">
+          <img id="previewImg" alt="Ảnh xem trước" />
+          <div id="previewPlaceholder" class="preview-placeholder">
+            Ảnh được chọn sẽ hiển thị rõ toàn khung tại đây
+          </div>
+        </div>
+
+        <div id="fileMeta" class="file-meta" style="display: none;">
+          <span id="fileName"></span>
+          <span id="fileSize"></span>
+        </div>
+
+        <div class="actions">
+          <button id="predictBtn" class="btn-primary" disabled>Dự đoán ngay</button>
+          <button id="clearBtn" class="btn-secondary" type="button">Xóa</button>
+        </div>
+      </div>
+
+      <!-- Cột phải: kết quả dự đoán và tỉ lệ các nhãn -->
+      <div class="result-panel">
+        <div id="errorBox" class="error-box"></div>
+
+        <div id="emptyState" class="result-card empty">
+          Chọn một tấm ảnh rác và nhấn <strong>&nbsp;Dự đoán ngay&nbsp;</strong> để xem kết quả và tỉ lệ chi tiết từng nhãn.
+        </div>
+
+        <div id="resultCard" class="result-card" style="display: none;">
+          <div id="winnerBox" class="winner-box">
+            <div class="winner-caption">Nhãn dự đoán cao nhất</div>
+            <div class="winner-row">
+              <div id="winnerName" class="winner-name">--</div>
+              <div id="winnerPercent" class="winner-percent">--%</div>
+            </div>
+            <div class="winner-sub">
+              <span>Thời gian: <strong id="inferTime">-- ms</strong></span>
+            </div>
+          </div>
+
+          <div class="section-title">Tỉ lệ xác suất toàn bộ các nhãn</div>
+          <div id="probList" class="prob-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "http://127.0.0.1:8000";
+
+    const TEN_NHAN_MAP = {
+      Huu_Co: "Rác hữu cơ",
+      Tai_Che: "Rác tái chế",
+      Vo_Co: "Rác vô cơ",
+    };
+
+    const dropZone = document.getElementById("dropZone");
+    const fileInput = document.getElementById("fileInput");
+    const previewImg = document.getElementById("previewImg");
+    const previewPlaceholder = document.getElementById("previewPlaceholder");
+    const fileMeta = document.getElementById("fileMeta");
+    const fileNameEl = document.getElementById("fileName");
+    const fileSizeEl = document.getElementById("fileSize");
+    const predictBtn = document.getElementById("predictBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const errorBox = document.getElementById("errorBox");
+    const emptyState = document.getElementById("emptyState");
+    const resultCard = document.getElementById("resultCard");
+    const winnerBox = document.getElementById("winnerBox");
+    const winnerName = document.getElementById("winnerName");
+    const winnerPercent = document.getElementById("winnerPercent");
+    const inferTime = document.getElementById("inferTime");
+    const probList = document.getElementById("probList");
+    const serverStatus = document.getElementById("serverStatus");
+
+    let selectedFile = null;
+    let previewUrl = null;
+
+    // Kiểm tra trạng thái API khi mở trang
+    async function checkHealth() {
+      try {
+        const res = await fetch(`${API_BASE}/health`);
+        const data = await res.json();
+        if (res.ok && data.models_loaded) {
+          serverStatus.className = "status-badge online";
+        } else {
+          serverStatus.className = "status-badge";
+        }
+      } catch {
+        serverStatus.textContent = "Chưa kết nối được API (cổng 8000)";
+        serverStatus.className = "status-badge offline";
+      }
+    }
+
+    function showError(msg) {
+      errorBox.textContent = msg;
+      errorBox.style.display = "block";
+    }
+
+    function hideError() {
+      errorBox.style.display = "none";
+    }
+
+    function handleFile(file) {
+      if (!file) return;
+      hideError();
+      selectedFile = file;
+
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      previewUrl = URL.createObjectURL(file);
+
+      previewImg.src = previewUrl;
+      previewImg.style.display = "block";
+      previewPlaceholder.style.display = "none";
+
+      fileNameEl.textContent = file.name;
+      fileSizeEl.textContent = `${(file.size / 1024).toFixed(1)} KB`;
+      fileMeta.style.display = "flex";
+
+      predictBtn.disabled = false;
+    }
+
+    // Chọn file bằng click
+    dropZone.addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", (e) => handleFile(e.target.files[0]));
+
+    // Kéo thả file
+    dropZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropZone.classList.add("dragover");
+    });
+    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropZone.classList.remove("dragover");
+      handleFile(e.dataTransfer.files[0]);
+    });
+
+    // Dán ảnh trực tiếp từ clipboard (Ctrl + V)
+    window.addEventListener("paste", (e) => {
+      const items = e.clipboardData?.items || [];
+      for (const item of items) {
+        if (item.type.startsWith("image/")) {
+          const blob = item.getAsFile();
+          const ext = item.type.split("/")[1] || "png";
+          const pastedFile = new File([blob], `clipboard.${ext}`, { type: item.type });
+          handleFile(pastedFile);
+          break;
+        }
+      }
+    });
+
+    // Nút xóa
+    clearBtn.addEventListener("click", () => {
+      selectedFile = null;
+      fileInput.value = "";
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      previewImg.style.display = "none";
+      previewImg.src = "";
+      previewPlaceholder.style.display = "block";
+      fileMeta.style.display = "none";
+      resultCard.style.display = "none";
+      emptyState.style.display = "flex";
+      predictBtn.disabled = true;
+      hideError();
+    });
+
+    // Gọi API POST /predict
+    predictBtn.addEventListener("click", async () => {
+      if (!selectedFile) return;
+
+      hideError();
+      predictBtn.disabled = true;
+      predictBtn.textContent = "Đang dự đoán...";
+
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      try {
+        const res = await fetch(`${API_BASE}/predict`, {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.detail || "Không thể dự đoán ảnh.");
+        }
+
+        renderResult(data);
+      } catch (err) {
+        showError(`Lỗi: ${err.message}. Hãy kiểm tra xem server FastAPI đã chạy chưa.`);
+      } finally {
+        predictBtn.disabled = false;
+        predictBtn.textContent = "Dự đoán ngay";
+      }
+    });
+
+    function renderResult(data) {
+      emptyState.style.display = "none";
+      resultCard.style.display = "block";
+
+      const label = data.predicted_label;
+      winnerBox.className = `winner-box ${label}`;
+      winnerName.textContent = TEN_NHAN_MAP[label] || data.display_name || label;
+      winnerPercent.textContent = data.confidence_percent || `${(data.confidence * 100).toFixed(2)}%`;
+      inferTime.textContent = `${data.inference_time_ms} ms`;
+
+      // Sắp xếp toàn bộ nhãn theo tỉ lệ từ cao xuống thấp
+      const entries = Object.entries(data.probabilities || {}).sort((a, b) => b[1] - a[1]);
+
+      probList.innerHTML = "";
+      entries.forEach(([key, prob], idx) => {
+        const pct = (prob * 100).toFixed(2);
+        const labelText = TEN_NHAN_MAP[key] || key;
+        const isTop = idx === 0;
+
+        const item = document.createElement("div");
+        item.className = `prob-item ${isTop ? "top" : ""}`;
+        item.innerHTML = `
+          <div class="prob-header">
+            <span class="prob-label">${labelText} ${isTop ? "— Kết quả chính" : ""}</span>
+            <span class="prob-value">${pct}%</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill ${key}" style="width: ${pct}%"></div>
+          </div>
+        `;
+        probList.appendChild(item);
+      });
+    }
+
+    checkHealth();
+  </script>
+</body>
+</html>

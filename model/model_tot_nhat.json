@@ -1,0 +1,19 @@
+{
+  "model_duoc_chon": "SVM",
+  "nguon_model": "svm_model.pkl",
+  "best_params": {
+    "clf__C": 10,
+    "clf__gamma": "scale",
+    "clf__kernel": "rbf"
+  },
+  "cv_f1_macro": 0.9657,
+  "test_f1_macro": 0.968,
+  "test_accuracy": 0.9677,
+  "infer_ms_per_img": 3.183,
+  "model_size_mb": 42.39,
+  "labels": {
+    "0": "Huu_Co",
+    "1": "Tai_Che",
+    "2": "Vo_Co"
+  }
+}

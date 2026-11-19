@@ -1,0 +1,14 @@
+# Môi trường ảo & file rác Python
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Bỏ qua toàn bộ ảnh dataset trong data/ nhưng GIỮ LẠI thư mục code preprocessor
+data/*
+!data/preprocessor/
+
+# File hệ điều hành / IDE
+.DS_Store
+Thumbs.db
+.vscode/

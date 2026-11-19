@@ -1,0 +1,10 @@
+{
+  "model": "SVM",
+  "best_params": {
+    "clf__C": 10,
+    "clf__gamma": "scale",
+    "clf__kernel": "rbf"
+  },
+  "cv_f1_macro": 0.9657,
+  "train_time_sec": 599.2
+}
