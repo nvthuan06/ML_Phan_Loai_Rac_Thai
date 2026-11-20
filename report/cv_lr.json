@@ -1,0 +1,8 @@
+{
+  "model": "LogisticRegression",
+  "best_params": {
+    "lr__C": 0.002
+  },
+  "cv_f1_macro": 0.9513,
+  "train_time_sec": 78.1
+}

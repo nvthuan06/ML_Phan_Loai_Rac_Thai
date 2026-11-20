@@ -26,11 +26,12 @@ Tổng cộng **16.110 ảnh** thuộc 3 lớp (`Huu_Co`, `Tai_Che`, `Vo_Co`), �
 
 ## Kết quả thực nghiệm & Lựa chọn mô hình
 
-| Mô hình           | Tham số tối ưu                                            | CV F1-Macro | Test Accuracy | Test F1-Macro | Test Precision | Test Recall | Suy luận (ms/ảnh) | Kích thước (MB) | Thời gian train (s) |
-| :---------------- | :-------------------------------------------------------- | :---------: | :-----------: | :-----------: | :------------: | :---------: | :---------------: | :-------------: | :-----------------: |
-| **SVM**           | `kernel='rbf'`, `C=10`, `gamma='scale'`                   | **0.9657**  |  **0.9677**   |  **0.9680**   |   **0.9691**   | **0.9669**  |       3.183       |    **42.39**    |        599.2        |
-| **KNN**           | `metric='cosine'`, `n_neighbors=7`, `weights='distance'`  |   0.9643    |    0.9662     |    0.9661     |     0.9675     |   0.9650    |       0.238       |      63.06      |        58.5         |
-| **Random Forest** | `n_estimators=300`, `max_depth=25`, `min_samples_split=2` |   0.9396    |    0.9410     |    0.9410     |     0.9450     |   0.9376    |       0.045       |      48.42      |        210.1        |
+| Mô hình                 | Tham số tối ưu                                            | CV F1-Macro | Test Accuracy | Test F1-Macro | Test Precision | Test Recall | Suy luận (ms/ảnh) | Kích thước (MB) | Thời gian train (s) |
+| :---------------------- | :-------------------------------------------------------- | :---------: | :-----------: | :-----------: | :------------: | :---------: | :---------------: | :-------------: | :-----------------: |
+| **SVM**                 | `kernel='rbf'`, `C=10`, `gamma='scale'`                   | **0.9657**  |  **0.9677**   |  **0.9680**   |   **0.9691**   | **0.9669**  |       3.183       |    **42.39**    |        599.2        |
+| **KNN**                 | `metric='cosine'`, `n_neighbors=7`, `weights='distance'`  |   0.9643    |    0.9662     |    0.9661     |     0.9675     |   0.9650    |       0.238       |      63.06      |        58.5         |
+| **Random Forest**       | `n_estimators=300`, `max_depth=25`, `min_samples_split=2` |   0.9396    |    0.9410     |    0.9410     |     0.9450     |   0.9376    |       0.045       |      48.42      |        210.1        |
+| **Logistic Regression** | `C=0,002`                                                 |   0.9513    |     0.955     |    0.9551     |     0.9561     |   0.9543    |       0.007       |      0.05       |        78.1         |
 
 - **Mô hình được chọn triển khai (`SVM - RBF`):** Đạt điểm cao nhất ở toàn bộ chỉ số chất lượng (`Test F1-Macro = 0.9680`, `Test Accuracy = 0.9677`), không bị overfitting (điểm Test cao hơn nhẹ so với CV) và có dung lượng file nhẹ nhất (`42.39 MB`).
 
@@ -61,11 +62,13 @@ ML_bao_cao/
 │   ├── knn_model.pkl
 │   ├── rf_model.pkl
 │   ├── svm_model.pkl
+    ├── lr_model.pkl
 │   └── labels.json
 ├── report/                          # Kết quả đánh giá, CSV và biểu đồ báo cáo
 │   ├── cv_knn.json
 │   ├── cv_rf.json
 │   ├── cv_svm.json
+    ├── cv_lr.json
 │   ├── bang_so_sanh_test.csv
 │   ├── confusion_matrix_3_mo_hinh.png
 │   └── so_sanh_mo_hinh.png
@@ -75,6 +78,7 @@ ML_bao_cao/
     ├── 03a_huan_luyen_knn.ipynb
     ├── 03b_huan_luyen_rf.ipynb
     ├── 03c_huan_luyen_svm.ipynb
+    ├── 03d_huan_luyen_lr.ipynb
     └── 04_danh_gia_mo_hinh.ipynb
 ```
 

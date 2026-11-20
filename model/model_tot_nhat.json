@@ -9,7 +9,7 @@
   "cv_f1_macro": 0.9657,
   "test_f1_macro": 0.968,
   "test_accuracy": 0.9677,
-  "infer_ms_per_img": 3.183,
+  "infer_ms_per_img": 6.552,
   "model_size_mb": 42.39,
   "labels": {
     "0": "Huu_Co",
